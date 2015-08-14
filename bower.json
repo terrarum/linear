@@ -1,0 +1,23 @@
+{
+  "name": "linear",
+  "version": "0.0.0",
+  "authors": [
+    "terrarum <james.fidler@immediate.co.uk>"
+  ],
+  "main": "index.html",
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "fpsmeter": "~0.3.1"
+  }
+}
