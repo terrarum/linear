@@ -99,12 +99,12 @@ var drawMouseLines = function() {
     // Horizontal line.
     ctx.moveTo(center.x, center.y);
     ctx.lineTo(mouse.x, center.y);
-    ctx.fillText(hLength, mouse.x + (center.x - mouse.x) / 2 - 10, center.y - 5);
+    ctx.fillText(Math.abs(hLength), mouse.x + (center.x - mouse.x) / 2 - 10, center.y - 5);
 
     // Vertical line.
     ctx.moveTo(mouse.x, center.y);
     ctx.lineTo(mouse.x, mouse.y);
-    ctx.fillText(vLength, mouse.x + 5, center.y + (mouse.y - center.y) / 2);
+    ctx.fillText(Math.abs(vLength), mouse.x + 5, center.y + (mouse.y - center.y) / 2);
 
     // Diagonal line.
     ctx.moveTo(center.x, center.y);
