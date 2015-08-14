@@ -115,7 +115,7 @@ var drawMouseLines = function() {
 
     newPos = calculateCartesian(p.magnitude, p.angle);
 
-    ctx.fillText(dLength.toFixed(2), newPos.x + offsetX, -newPos.y + offsetY);
+    ctx.fillText(dLength.toFixed(2), newPos.x + offsetX + 10, -newPos.y + offsetY);
 
     ctx.stroke();
 };
