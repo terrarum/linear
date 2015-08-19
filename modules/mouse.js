@@ -95,7 +95,7 @@ var drawMouseLines = function() {
     ctx.moveTo(center.x, center.y);
 
     angle = Math.atan2(-midpoint.y, midpoint.x);
-
+    
     // Top right.
     if (angle <= 0 && angle > -Math.PI / 2){
         arcAngleStart = 0;
@@ -105,8 +105,13 @@ var drawMouseLines = function() {
     }
     // Top left.
     else if (angle <= -Math.PI / 2 && angle >= -Math.PI) {
-        arcAngleStart = Math.PI;
         arcCCW = false;
+        if (angle == -Math.PI) {
+            arcAngleStart = -Math.PI;
+        }
+        else {
+            arcAngleStart = Math.PI;
+        }
 
         offsetPos = polar(5, p.angle - Math.PI / 2);
     }
@@ -118,7 +123,7 @@ var drawMouseLines = function() {
         offsetPos = polar(5, p.angle - Math.PI / 2);
     }
     // Bottom left.
-    else {
+    else if (angle > Math.PI / 2 && angle <= Math.PI) {
         arcAngleStart = Math.PI;
         arcCCW = true;
 
