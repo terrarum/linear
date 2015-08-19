@@ -21,11 +21,8 @@ var mouse = {
 $(document).on("mousemove", function(ev) {
     mouse.x = ev.pageX - $canvas.offset().left;
     mouse.y = ev.pageY - $canvas.offset().top;
-
-    $(".js-mousePos").html(mouse.x + " / " + mouse.y);
 });
 
-//
 var drawItem = function(item) {
 
     var x = item.x;
@@ -44,48 +41,26 @@ var drawItem = function(item) {
 };
 
 
-var polar = function() {
-    return {
-        magnitude: 0,
-        angle: 0
-    }
-};
-
-var calculatePolar = function(x, y) {
-    var r = Math.pow((Math.pow(x, 2) + Math.pow(y, 2)), 0.5);
-    var theta = Math.atan(y/x) * 360 / 2 / Math.PI;
-    if (x >= 0 && y >= 0) {
-        theta = theta;
-    } else if (x < 0 && y >= 0) {
-        theta = 180 + theta;
-    } else if (x < 0 && y < 0) {
-        theta = 180 + theta;
-    } else if (x > 0 && y < 0) {
-        theta = 360 + theta;
-    }
-
-    $(".js-angle").html(theta.toFixed(2));
-
+var polar = function(r, theta) {
     return {
         magnitude: r,
         angle: theta
     }
 };
 
-function calculateCartesian(r, theta){
-    var x = r * Math.cos(theta * 2 * Math.PI / 360);
-    var y = r * Math.sin(theta * 2 * Math.PI / 360);
-    return {
-        x: x,
-        y: y
-    }
-}
-
 var hLength,
     vLength,
     dLength,
     p,
-    newPos;
+    midpoint,
+    quartpoint,
+    offsetPos,
+    offsetPosP,
+    offsetmidpointP,
+    angle,
+    arcAngleStart,
+    arcCCW;
+
 var drawMouseLines = function() {
     ctx.beginPath();
 
@@ -110,12 +85,53 @@ var drawMouseLines = function() {
     ctx.moveTo(center.x, center.y);
     ctx.lineTo(mouse.x, mouse.y);
 
-    p = calculatePolar(hLength, vLength);
-    p.magnitude = p.magnitude / 2;
+    p = utils.calculatePolar(hLength, vLength);
+    
+    midpoint = utils.calculateCartesian(p.magnitude / 2, p.angle);
+    quartpoint = utils.calculateCartesian(p.magnitude / 4, p.angle);
 
-    newPos = calculateCartesian(p.magnitude, p.angle);
+    ctx.fillText(dLength.toFixed(2), midpoint.x + offsetX + 10, -midpoint.y + offsetY);
 
-    ctx.fillText(dLength.toFixed(2), newPos.x + offsetX + 10, -newPos.y + offsetY);
+    ctx.moveTo(center.x, center.y);
+
+    angle = Math.atan2(-midpoint.y, midpoint.x);
+
+    // Top right.
+    if (angle <= 0 && angle > -Math.PI / 2){
+        arcAngleStart = 0;
+        arcCCW = true;
+
+        offsetPos = polar(-5, p.angle - Math.PI / 2);
+    }
+    // Top left.
+    else if (angle <= -Math.PI / 2 && angle >= -Math.PI) {
+        arcAngleStart = Math.PI;
+        arcCCW = false;
+
+        offsetPos = polar(5, p.angle - Math.PI / 2);
+    }
+    // Bottom right.
+    else if (angle > 0 && angle < Math.PI / 2) {
+        arcAngleStart = 0;
+        arcCCW = false;
+
+        offsetPos = polar(5, p.angle - Math.PI / 2);
+    }
+    // Bottom left.
+    else {
+        arcAngleStart = Math.PI;
+        arcCCW = true;
+
+        offsetPos = polar(-5, p.angle - Math.PI / 2);
+    }
+
+    offsetPosP = utils.calculateCartesian(offsetPos.magnitude, offsetPos.angle);
+    offsetmidpointP = {
+        x: midpoint.x + offsetPosP.x,
+        y: midpoint.y + offsetPosP.y
+    };
+
+    ctx.arc(center.x, center.y, p.magnitude / 4, arcAngleStart, angle, arcCCW);
 
     ctx.stroke();
 };
@@ -129,6 +145,13 @@ var _render = function() {
     // Draw center;
     drawMouseLines()
     drawItem(center);
+
+    ctx.beginPath();
+    ctx.strokeStyle = "#ffffff";
+    ctx.moveTo(offsetPosP.x + offsetX, -offsetPosP.y + offsetY);
+    ctx.lineTo(offsetmidpointP.x + offsetX, -offsetmidpointP.y + offsetY);
+    ctx.stroke();
+
     drawItem(mouse);
 };
 
